@@ -42,7 +42,7 @@ if args.action == 'add':
     if not args.email:
         print("Please specify email address to add");
         exit(2)
-    # Add new, disabled, email address:
+    # Add new email address:
     json_data = {
         'name': args.email,
         'recipients': real_email,
