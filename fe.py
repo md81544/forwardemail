@@ -5,6 +5,7 @@ import argparse
 import json
 import os
 import requests
+import sys
 
 auth_code = ''
 try:
@@ -60,8 +61,6 @@ elif args.action == 'delete':
 
 elif args.action == 'list':
     req = f"https://api.forwardemail.net/v1/domains/{args.domain}/aliases"
-    if args.email:
-        req = req + f"/{args.email}"
     response = requests.get(req, auth=(auth_code, ''))
     if response.status_code != 200:
         print(response.json())
@@ -69,13 +68,15 @@ elif args.action == 'list':
     if args.json:
         print(json.dumps(response.json(), indent=2))
         exit(0)
-    if isinstance(response.json(), list):
-        for alias in response.json():
-            print(f"{alias['name']}@{alias['domain']['name']} --> ", end='')
-            list_emails(alias['recipients'])
-    else:
-        print(f"{response.json()['name']}@{response.json()['domain']['name']} --> ", end='')
-        list_emails(response.json()["recipients"])
+    for alias in response.json():
+        if alias["is_enabled"]:
+            print("Enabled : ", end='')
+        else:
+            print("Disabled: ", end='')
+        print(f"{alias['name']}@{alias['domain']['name']} --> ", end='')
+        list_emails(alias['recipients'])
+    if args.email:
+        print(f"\nWarning: email parameter \"{args.email}\" was ignored", file=sys.stderr)
 
 else:
     print("Unsupported action")
