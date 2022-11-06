@@ -57,7 +57,16 @@ if args.action == 'add':
         exit(1)
 
 elif args.action == 'delete':
-    print("TODO")
+    if not args.email:
+        print("Please specify email address to delete");
+        exit(2)
+    response = requests.delete(
+        f"https://api.forwardemail.net/v1/domains/{args.domain}/aliases/{args.email}",
+        auth = (auth_code, '')
+        )
+    if response.status_code != 200:
+        print(response.json())
+        exit(1)
 
 elif args.action == 'list':
     req = f"https://api.forwardemail.net/v1/domains/{args.domain}/aliases"
