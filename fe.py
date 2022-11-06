@@ -23,6 +23,8 @@ parser.add_argument('-a', '--action', type=str, required=True, choices=['add', '
 parser.add_argument('-d', '--domain', type=str, required=True)
 parser.add_argument('-e', '--email', type=str, required=False, help="Don't add the @.* portion!")
 parser.add_argument('-j', '--json', action='store_true')
+parser.add_argument('--enable', action='store_true')
+
 args = parser.parse_args()
 
 def list_emails(email_list):
@@ -45,7 +47,7 @@ if args.action == 'add':
         'name': args.email,
         'recipients': real_email,
         'description': 'Added via API',
-        'is_enabled': False
+        'is_enabled': True if args.enable else False
     }
     response = requests.post(
         f"https://api.forwardemail.net/v1/domains/{args.domain}/aliases",
