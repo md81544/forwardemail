@@ -22,8 +22,8 @@ parser = argparse.ArgumentParser(description='Add disabled email address to forw
 parser.add_argument('-a', '--action', type=str, required=True, choices=['add', 'delete', 'list'])
 parser.add_argument('-d', '--domain', type=str, required=True)
 parser.add_argument('-e', '--email', type=str, required=False, help="Don't add the @.* portion!")
-parser.add_argument('-j', '--json', action='store_true')
-parser.add_argument('--enable', action='store_true')
+parser.add_argument('-j', '--json', action='store_true', help='Output full JSON results')
+parser.add_argument('--enable', action='store_true', help='Create enabled email address')
 
 args = parser.parse_args()
 
