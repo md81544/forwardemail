@@ -19,7 +19,8 @@ except IOError:
     exit(3)
 
 parser = argparse.ArgumentParser(description='Add disabled email address to forwardemail')
-parser.add_argument('-a', '--action', type=str, required=True, choices=['add', 'delete', 'list'])
+parser.add_argument('-a', '--action', type=str, required=True,
+    choices=['add', 'delete', 'list', 'update'])
 parser.add_argument('-d', '--domain', type=str, required=True)
 parser.add_argument('-e', '--email', type=str, required=False, help="Don't add the @.* portion!")
 parser.add_argument('-j', '--json', action='store_true', help='Output full JSON results')
@@ -37,7 +38,6 @@ def list_emails(email_list):
         print(recipient, end=' ')
         print("")
 
-
 if args.action == 'add':
     if not args.email:
         print("Please specify email address to add");
@@ -51,6 +51,24 @@ if args.action == 'add':
     }
     response = requests.post(
         f"https://api.forwardemail.net/v1/domains/{args.domain}/aliases",
+        json = json_data,
+        auth = (auth_code, '')
+        )
+    if response.status_code != 200:
+        print(response.json())
+        exit(1)
+
+elif args.action == 'update':
+    if not args.email:
+        print("Please specify email address to update");
+        exit(2)
+    # Update existing email addresss
+    json_data = {
+        'recipients': real_email,
+        'is_enabled': True if args.enable else False
+    }
+    response = requests.put(
+        f"https://api.forwardemail.net/v1/domains/{args.domain}/aliases/{args.email}",
         json = json_data,
         auth = (auth_code, '')
         )
